@@ -74,15 +74,17 @@ async function run() {
                     shortDescription: 1,
                     categoryName: 1
                 };
-        
-                const result = await blogsCollection.find().project(projection).toArray();
+                const searchTitle = req.query.title;
+                const query = searchTitle ? { title: { $regex: searchTitle, $options: "i" } } : {};
+
+                const result = await blogsCollection.find(query).project(projection).toArray();
                 res.send(result);
             } catch (error) {
                 console.error(error);
                 res.status(500).json({ error: "Failed to retrieve blogs." });
             }
         });
-          
+
 
 
     } finally {
