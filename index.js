@@ -49,6 +49,12 @@ async function run() {
             }
         });
 
+        // API ENDPOINT TO READ ALL BLOGS 
+        app.get("/blogs", async (req, res) => {
+            const result = await blogsCollection.find().toArray();
+            res.send(result);
+          });
+
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
