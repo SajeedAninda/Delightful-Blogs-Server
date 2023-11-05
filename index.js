@@ -41,7 +41,16 @@ async function run() {
         // API ENDPOINT TO GET BLOG DATA BY DATE
         app.get('/blogsByDate', async (req, res) => {
             try {
-                const blogsByDate = await blogsCollection.find().sort({ postedAt: -1 }).toArray();
+                let projection = {
+                    title: 1,
+                    photoUrl: 1,
+                    shortDescription: 1,
+                    categoryName: 1,
+                    postedAt: 1
+                };
+
+                const blogsByDate = await blogsCollection.find().sort({ postedAt: -1 }).project(projection).limit(6).toArray();
+
                 res.json(blogsByDate);
             } catch (error) {
                 console.error(error);
@@ -49,11 +58,12 @@ async function run() {
             }
         });
 
+
         // API ENDPOINT TO READ ALL BLOGS 
         app.get("/blogs", async (req, res) => {
             const result = await blogsCollection.find().toArray();
             res.send(result);
-          });
+        });
 
     } finally {
         // Ensures that the client will close when you finish/error
