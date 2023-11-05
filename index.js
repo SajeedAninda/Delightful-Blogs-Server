@@ -108,6 +108,39 @@ async function run() {
             res.send(result);
         });
 
+        // API TO GET DATA TO UPDATE BLOGS 
+        app.get("updateBlog/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = {
+                _id: new ObjectId(id),
+            };
+            const result = await blogsCollection.findOne(query);
+            console.log(result);
+            res.send(result);
+        });
+
+        // PATCH DATA TO UPDATE BLOG
+        app.patch('/updateBlog/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateData = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updatedBlogs = {
+                $set: {
+                    title: updateData.title,
+                    categoryName: updateData.categoryName,
+                    imgUrl: updateData.imgUrl,
+                    shortDescription: updateData.shortDescription,
+                    longDescription: updateData.longDescription
+                },
+            };
+            const result = await blogsCollection.updateOne(filter, updatedBlogs, options);
+            res.send(result);
+        });
+
+
+
+
         // API TO POST WISHLIST DATA 
         app.post("/wishlist", async (req, res) => {
             const wishlist = req.body;
@@ -134,7 +167,6 @@ async function run() {
             console.log(result);
             res.send(result);
         });
-
 
 
     } finally {
