@@ -74,9 +74,20 @@ async function run() {
                     shortDescription: 1,
                     categoryName: 1
                 };
+        
                 const searchTitle = req.query.title;
-                const query = searchTitle ? { title: { $regex: searchTitle, $options: "i" } } : {};
-
+                const searchCategory = req.query.categoryName; 
+        
+                const query = {};
+        
+                if (searchTitle) {
+                    query.title = { $regex: searchTitle, $options: "i" };
+                }
+        
+                if (searchCategory) {
+                    query.categoryName = searchCategory;
+                }
+        
                 const result = await blogsCollection.find(query).project(projection).toArray();
                 res.send(result);
             } catch (error) {
