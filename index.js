@@ -28,6 +28,8 @@ async function run() {
 
         // DATABASE COLLECTIONS 
         let blogsCollection = client.db("delightfulBlogsDB").collection("blogs");
+        // WISHLIST COLLECTION 
+        let wishlistCollection = client.db("delightfulBlogsDB").collection("wishlist");
 
         // API ENDPOINT TO POST DATA INTO BLOGS COLLECTION 
         app.post("/blogs", async (req, res) => {
@@ -105,6 +107,14 @@ async function run() {
             console.log(result);
             res.send(result);
         });
+
+        // API TO POST WISHLIST DATA 
+        app.post("/wishlist", async (req, res) => {
+            const wishlist = req.body;
+            const result = await wishlistCollection.insertOne(wishlist);
+            console.log(result);
+            res.send(result);
+          });
 
 
 
