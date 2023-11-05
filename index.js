@@ -29,6 +29,15 @@ async function run() {
 
         // DATABASE COLLECTIONS 
         let blogsCollection = client.db("delightfulBlogsDB").collection("blogs");
+
+        // API ENDPOINT TO POST DATA INTO BLOGS COLLECTION 
+        app.post("/blogs", async (req, res) => {
+            const blogs = req.body;
+            const result = await blogsCollection.insertOne(blogs);
+            console.log(result);
+            res.send(result);
+        });
+
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
