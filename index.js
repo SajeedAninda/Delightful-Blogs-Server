@@ -114,7 +114,26 @@ async function run() {
             const result = await wishlistCollection.insertOne(wishlist);
             console.log(result);
             res.send(result);
-          });
+        });
+
+        //  API TO GET USER SPECIFIC WISHLIST DATA 
+        app.get("/wishlist", async (req, res) => {
+            const currentUserEmail = req.query.email;
+            const result = await wishlistCollection.find({ currentUserEmail }).toArray();
+            res.send(result);
+        });
+
+        // API TO DELETE WISHLIST ITEM BY ID 
+        app.delete("/wishlist/:id", async (req, res) => {
+            const id = req.params.id;
+            console.log("delete", id);
+            const query = {
+                _id: new ObjectId(id),
+            };
+            const result = await wishlistCollection.deleteOne(query);
+            console.log(result);
+            res.send(result);
+        });
 
 
 
