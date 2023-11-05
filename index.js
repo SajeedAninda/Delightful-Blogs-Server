@@ -60,10 +60,30 @@ async function run() {
 
 
         // API ENDPOINT TO READ ALL BLOGS 
-        app.get("/blogs", async (req, res) => {
+        app.get("/allBlogs", async (req, res) => {
             const result = await blogsCollection.find().toArray();
             res.send(result);
         });
+
+        // API TO GET SELECTIVE DATA FROM ALL BLOGS 
+        app.get("/blogs", async (req, res) => {
+            try {
+                const projection = {
+                    title: 1,
+                    photoUrl: 1,
+                    shortDescription: 1,
+                    categoryName: 1
+                };
+        
+                const result = await blogsCollection.find().project(projection).toArray();
+                res.send(result);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: "Failed to retrieve blogs." });
+            }
+        });
+          
+
 
     } finally {
         // Ensures that the client will close when you finish/error
