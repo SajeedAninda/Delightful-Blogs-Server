@@ -38,6 +38,17 @@ async function run() {
             res.send(result);
         });
 
+        // API ENDPOINT TO GET BLOG DATA BY DATE
+        app.get('/blogsByDate', async (req, res) => {
+            try {
+                const blogsByDate = await blogsCollection.find().sort({ postedAt: -1 }).toArray();
+                res.json(blogsByDate);
+            } catch (error) {
+                console.error(error);
+                res.status(500).json({ error: 'Failed to retrieve blogs.' });
+            }
+        });
+
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
