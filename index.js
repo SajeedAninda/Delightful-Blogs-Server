@@ -1,10 +1,16 @@
 const express = require('express')
 let cors = require("cors");
-const app = express()
 require('dotenv').config()
-app.use(cors());
-app.use(express.json());
+const jwt = require('jsonwebtoken');
+const app = express()
 const port = process.env.PORT || 5000;
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    credentials: true
+}));
+app.use(express.json());
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ruhvmdy.mongodb.net/?retryWrites=true&w=majority`;
@@ -106,7 +112,7 @@ async function run() {
                 _id: new ObjectId(id),
             };
             const result = await blogsCollection.findOne(query);
-            console.log(result);
+            // console.log(result);
             res.send(result);
         });
 
@@ -117,7 +123,7 @@ async function run() {
                 _id: new ObjectId(id),
             };
             const result = await blogsCollection.findOne(query);
-            console.log(result);
+            // console.log(result);
             res.send(result);
         });
 
@@ -147,7 +153,7 @@ async function run() {
         app.post("/wishlist", async (req, res) => {
             const wishlist = req.body;
             const result = await wishlistCollection.insertOne(wishlist);
-            console.log(result);
+            // console.log(result);
             res.send(result);
         });
 
@@ -161,12 +167,12 @@ async function run() {
         // API TO DELETE WISHLIST ITEM BY ID 
         app.delete("/wishlist/:id", async (req, res) => {
             const id = req.params.id;
-            console.log("delete", id);
+            // console.log("delete", id);
             const query = {
                 _id: new ObjectId(id),
             };
             const result = await wishlistCollection.deleteOne(query);
-            console.log(result);
+            // console.log(result);
             res.send(result);
         });
 
@@ -174,7 +180,7 @@ async function run() {
         app.post("/comments", async (req, res) => {
             const comments = req.body;
             const result = await commentsCollection.insertOne(comments);
-            console.log(result);
+            // console.log(result);
             res.send(result);
         });
 
@@ -202,9 +208,21 @@ async function run() {
         // JWT API ENDPOINTS
         app.post('/jwt', async (req, res) => {
             const user = req.body;
-            res.send({ success: true })
+            // console.log(user);
+            
+            const token = jwt.sign(user, process.env.SECRET_KEY, {
+                expiresIn: '10h'
+            });
+            
+            res
+            .cookie('token', token, {
+                httpOnly: true,
+                secure: false,
+                sameSite :'strict'
+            })
+            .send({ success: true })
         })
-
+        
 
 
 
