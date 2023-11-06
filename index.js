@@ -84,7 +84,7 @@ async function run() {
 
 
         // API ENDPOINT TO READ ALL BLOGS 
-        app.get("/allBlogs", async (req, res) => {
+        app.get("/allBlogs", verifyToken, async (req, res) => {
             const result = await blogsCollection.find().toArray();
             res.send(result);
         });
@@ -200,7 +200,7 @@ async function run() {
         });
 
         // READ COMMENTS DATA BASED ON BLOGS 
-        app.get("/comments", async (req, res) => {
+        app.get("/comments",verifyToken, async (req, res) => {
             const blogId = req.query.blogId;
             const result = await commentsCollection.find({ commentedBlogId: blogId }).toArray();
             res.send(result);
