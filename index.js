@@ -12,6 +12,21 @@ app.use(cors({
 }));
 app.use(express.json());
 
+const verifyToken = async (req, res, next) => {
+    const token = req.cookies?.token;
+    // console.log(token);
+    if (!token) {
+        return res.status(401).send({ message: 'Not Authorized' })
+    }
+    jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+        if (err) {
+            return res.status(401).send({ message: 'Unauthorized access' })
+        }
+        req.user = decoded;
+        next();
+    })
+}
+
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ruhvmdy.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -43,7 +58,7 @@ async function run() {
         app.post("/blogs", async (req, res) => {
             const blogs = req.body;
             const result = await blogsCollection.insertOne(blogs);
-            console.log(result);
+            // console.log(result);
             res.send(result);
         });
 
@@ -106,7 +121,7 @@ async function run() {
         });
 
         // API TO GET SINGLE DATA BY ID FOR BLOG DETAILS 
-        app.get("/blogDetails/:id", async (req, res) => {
+        app.get("/blogDetails/:id", verifyToken, async (req, res) => {
             const id = req.params.id;
             const query = {
                 _id: new ObjectId(id),
@@ -158,7 +173,7 @@ async function run() {
         });
 
         //  API TO GET USER SPECIFIC WISHLIST DATA 
-        app.get("/wishlist", async (req, res) => {
+        app.get("/wishlist", verifyToken, async (req, res) => {
             const currentUserEmail = req.query.email;
             const result = await wishlistCollection.find({ currentUserEmail }).toArray();
             res.send(result);
@@ -209,20 +224,19 @@ async function run() {
         app.post('/jwt', async (req, res) => {
             const user = req.body;
             // console.log(user);
-            
+
             const token = jwt.sign(user, process.env.SECRET_KEY, {
                 expiresIn: '10h'
             });
-            
+
             res
-            .cookie('token', token, {
-                httpOnly: true,
-                secure: false,
-                sameSite :'strict'
-            })
-            .send({ success: true })
+                .cookie('token', token, {
+                    httpOnly: true,
+                    secure: false
+                })
+                .send({ success: true })
         })
-        
+
 
 
 
