@@ -185,6 +185,22 @@ async function run() {
             res.send(result);
         });
 
+        // API ENDPOINT TO GET TOP 10 BLOGS BASED ON LENGTH 
+        app.get("/topTenBlogs", async (req, res) => {
+            const result = await blogsCollection
+                .aggregate([
+                    { $addFields: { longDescriptionLength: { $strLenCP: "$longDescription" } } },
+                    { $sort: { longDescriptionLength: -1 } },
+                    { $limit: 10 },
+                    { $project: { title: 1, author_name: 1, userPhoto: 1, _id: 1 } }
+                ])
+                .toArray();
+
+            res.send(result);
+        });
+
+
+
 
     } finally {
         // Ensures that the client will close when you finish/error
