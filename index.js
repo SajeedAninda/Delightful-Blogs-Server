@@ -242,7 +242,7 @@ async function run() {
             let user = req.body;
             res
                 .clearCookie("token", { maxAge: 0 })
-                .send({ message: success })
+                .send({ message: "success" })
         })
 
 
