@@ -199,6 +199,12 @@ async function run() {
             res.send(result);
         });
 
+        // JWT API ENDPOINTS
+        app.post('/jwt', async (req, res) => {
+            const user = req.body;
+            res.send({ success: true })
+        })
+
 
 
 
