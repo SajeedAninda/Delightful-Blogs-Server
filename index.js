@@ -132,13 +132,13 @@ async function run() {
         });
 
         // API TO GET DATA TO UPDATE BLOGS 
-        app.get("updateBlog/:id", async (req, res) => {
+        app.get("/updateBlog/:id", async (req, res) => {
             const id = req.params.id;
             const query = {
                 _id: new ObjectId(id),
             };
             const result = await blogsCollection.findOne(query);
-            // console.log(result);
+            console.log(result);
             res.send(result);
         });
 
