@@ -30,6 +30,8 @@ async function run() {
         let blogsCollection = client.db("delightfulBlogsDB").collection("blogs");
         // WISHLIST COLLECTION 
         let wishlistCollection = client.db("delightfulBlogsDB").collection("wishlist");
+        // COMMENTS COLLECTION 
+        let commentsCollection = client.db("delightfulBlogsDB").collection("comments");
 
         // API ENDPOINT TO POST DATA INTO BLOGS COLLECTION 
         app.post("/blogs", async (req, res) => {
@@ -165,6 +167,21 @@ async function run() {
             };
             const result = await wishlistCollection.deleteOne(query);
             console.log(result);
+            res.send(result);
+        });
+
+        // API TO POST DATA TO COMMENTS COLLECTION 
+        app.post("/comments", async (req, res) => {
+            const comments = req.body;
+            const result = await commentsCollection.insertOne(comments);
+            console.log(result);
+            res.send(result);
+        });
+
+        // READ COMMENTS DATA BASED ON BLOGS 
+        app.get("/comments", async (req, res) => {
+            const blogId = req.query.blogId;
+            const result = await commentsCollection.find({ commentedBlogId: blogId }).toArray();
             res.send(result);
         });
 
