@@ -200,7 +200,7 @@ async function run() {
         });
 
         // READ COMMENTS DATA BASED ON BLOGS 
-        app.get("/comments",verifyToken, async (req, res) => {
+        app.get("/comments", verifyToken, async (req, res) => {
             const blogId = req.query.blogId;
             const result = await commentsCollection.find({ commentedBlogId: blogId }).toArray();
             res.send(result);
@@ -235,6 +235,14 @@ async function run() {
                     secure: false
                 })
                 .send({ success: true })
+        })
+
+        // CLEAR COOKIES AFTER USER IS LOGGED OUT 
+        app.post("/logout", (req, res) => {
+            let user = req.body;
+            res
+                .clearCookie("token", { maxAge: 0 })
+                .send({ message: success })
         })
 
 
