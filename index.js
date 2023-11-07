@@ -161,9 +161,6 @@ async function run() {
             res.send(result);
         });
 
-
-
-
         // API TO POST WISHLIST DATA 
         app.post("/wishlist", async (req, res) => {
             const wishlist = req.body;
@@ -175,6 +172,10 @@ async function run() {
         //  API TO GET USER SPECIFIC WISHLIST DATA 
         app.get("/wishlist", verifyToken, async (req, res) => {
             const currentUserEmail = req.query.email;
+            const userTokenEmail = req.user.email;
+            if (currentUserEmail !== userTokenEmail) {
+                return res.status(401).send({ message: 'Not Authorized' });
+            }
             const result = await wishlistCollection.find({ currentUserEmail }).toArray();
             res.send(result);
         });
@@ -226,7 +227,7 @@ async function run() {
             // console.log(user);
 
             const token = jwt.sign(user, process.env.SECRET_KEY, {
-                expiresIn: '10h'
+                expiresIn: '24h'
             });
 
             res
