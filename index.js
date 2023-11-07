@@ -152,7 +152,7 @@ async function run() {
                 $set: {
                     title: updateData.title,
                     categoryName: updateData.categoryName,
-                    imgUrl: updateData.imgUrl,
+                    photoUrl: updateData.photoUrl,
                     shortDescription: updateData.shortDescription,
                     longDescription: updateData.longDescription
                 },
