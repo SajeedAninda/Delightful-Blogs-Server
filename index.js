@@ -55,7 +55,7 @@ async function run() {
         let commentsCollection = client.db("delightfulBlogsDB").collection("comments");
 
         // API ENDPOINT TO POST DATA INTO BLOGS COLLECTION 
-        app.post("/blogs", async (req, res) => {
+        app.post("/blogs", verifyToken, async (req, res) => {
             const blogs = req.body;
             const result = await blogsCollection.insertOne(blogs);
             // console.log(result);
