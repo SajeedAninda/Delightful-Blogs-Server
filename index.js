@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 app.use(cors({
-    origin: ['https://delightful-blogs-sajeed.netlify.app'],
+    origin: ['https://delightful-blogs-sajeed.netlify.app', 'http://localhost:5173', 'http://localhost:5174'],
     credentials: true
 }));
 app.use(express.json());
@@ -164,10 +164,26 @@ async function run() {
         // API TO POST WISHLIST DATA 
         app.post("/wishlist", async (req, res) => {
             const wishlist = req.body;
+
+            const existingBlog = await wishlistCollection.findOne({
+                currentUserEmail: wishlist.currentUserEmail,
+                previousId: wishlist.previousId
+            });
+
+            if (existingBlog) {
+                return res.send({ success: false, message: "Blog Exists in Wishlist" });
+            }
+
+            // Add the blog to the wishlist
             const result = await wishlistCollection.insertOne(wishlist);
-            // console.log(result);
-            res.send(result);
+
+            if (!result) {
+                return res.status(500).json({ success: false, error: "Failed to add blog to the wishlist" });
+            }
+
+            res.status(201).json({ success: true, insertedId: result.insertedId });
         });
+
 
         //  API TO GET USER SPECIFIC WISHLIST DATA 
         app.get("/wishlist", verifyToken, async (req, res) => {
@@ -244,7 +260,7 @@ async function run() {
             let user = req.body;
             res
                 .clearCookie("token", {
-                    maxAge: 0, 
+                    maxAge: 0,
                     secure: true,
                     sameSite: 'none',
                 })
