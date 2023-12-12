@@ -237,6 +237,14 @@ async function run() {
             res.send(result);
         });
 
+        // GET USER SPECIFIC BLOGS FOR MY COLLECTION PAGE 
+        app.get('/myBlogs/:currentUserEmail', verifyToken, async (req, res) => {
+            const currentUserEmail = req.params.currentUserEmail;
+            const result = await blogsCollection.find({ userEmail: currentUserEmail }).toArray();
+            res.send(result);
+        });
+
+
         // JWT API ENDPOINTS
         app.post('/jwt', async (req, res) => {
             const user = req.body;
